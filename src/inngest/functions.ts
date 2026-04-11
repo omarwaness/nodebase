@@ -1,5 +1,4 @@
 // src/inngest/functions.ts
-import prisma from "@/lib/db";
 import { inngest } from "./client";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
@@ -20,7 +19,13 @@ export const execute = inngest.createFunction(
             {
                 model: google("gemini-2.5-flash"),
                 system: "You are a helpful assistant",
-                prompt: "What is 2 + 2"
+                prompt: "What is 2 + 2",
+                experimental_telemetry: {
+                    isEnabled: true,
+                    functionId: "joke_agent",
+                    recordInputs: true,
+                    recordOutputs: true,
+                },
             })
 
         const { steps: openaiSteps } = await step.ai.wrap(
@@ -29,7 +34,13 @@ export const execute = inngest.createFunction(
             {
                 model: openai("gpt-4"),
                 system: "You are a helpful assistant",
-                prompt: "What is 2 + 2"
+                prompt: "What is 2 + 2",
+                experimental_telemetry: {
+                    isEnabled: true,
+                    functionId: "joke_agent",
+                    recordInputs: true,
+                    recordOutputs: true,
+                },
             })
 
         const { steps: anthropicSteps } = await step.ai.wrap(
@@ -38,7 +49,13 @@ export const execute = inngest.createFunction(
             {
                 model: anthropic("claude-sonnet-4-5"),
                 system: "You are a helpful assistant",
-                prompt: "What is 2 + 2"
+                prompt: "What is 2 + 2",
+                experimental_telemetry: {
+                    isEnabled: true,
+                    functionId: "joke_agent",
+                    recordInputs: true,
+                    recordOutputs: true,
+                },
             })
 
         return { geminiSteps, openaiSteps, anthropicSteps }
