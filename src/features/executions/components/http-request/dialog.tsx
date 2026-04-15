@@ -32,6 +32,13 @@ import { useForm } from 'react-hook-form'
 import z from 'zod'
 
 const formSchema = z.object({
+  variableName: z
+    .string()
+    .min(1, { message: 'Variable name is required' })
+    .regex(/^[a-zA-Z_$][a-zA-Z0-9_$]*$/, {
+      message:
+        'Variable name must start with a letter, underscore, or dollar sign and contain only letters, numbers, underscores, and dollar signs'
+    }),
   endpoint: z.url({ message: 'Please enter a valid URL' }),
   method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']),
   body: z.string().optional()
@@ -55,6 +62,7 @@ export const HttpRequestDialog = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      variableName: defaultValues.variableName || '',
       endpoint: defaultValues.endpoint || '',
       method: defaultValues.method || 'GET',
       body: defaultValues.body || ''
@@ -64,12 +72,15 @@ export const HttpRequestDialog = ({
   useEffect(() => {
     if (open) {
       form.reset({
+        variableName: defaultValues.variableName || '',
         endpoint: defaultValues.endpoint || '',
         method: defaultValues.method || 'GET',
         body: defaultValues.body || ''
       })
     }
   }, [open, defaultValues, form])
+
+  const watchVariableName = form.watch('variableName') || 'myVariable'
 
   const watchMethod = form.watch('method')
   const showBodyField = ['POST', 'PUT', 'PATCH'].includes(watchMethod)
@@ -93,6 +104,25 @@ export const HttpRequestDialog = ({
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-8 mt-4"
           >
+            <FormField
+              control={form.control}
+              name="variableName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variable Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="myVariable" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Use this variable name to reference the response data in
+                    subsequent nodes. For example, if you enter "myVariable",
+                    you can access the response data using{' '}
+                    {`{{${watchVariableName}}}`} or specific properties with{' '}
+                    {`{{${watchVariableName}.property}}`}.
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="method"
