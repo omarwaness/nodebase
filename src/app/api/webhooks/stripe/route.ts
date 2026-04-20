@@ -15,29 +15,27 @@ export async function POST(request: NextRequest) {
 
         const body = await request.json();
 
-        const formData = {
-            formId: body.formId,
-            formTitle: body.formTitle,
-            responsesId: body.responsesId,
-            timestamp: body.timestamp,
-            respondentEmail: body.respondentEmail,
-            responses: body.responses,
-            raw: body,
+        const stripeData = {
+            eventId: body.id,
+            eventType: body.type,
+            timestamp: body.created,
+            livemode: body.livemode,
+            raw: body.data?.object,
         }
 
         // trigger an inngest job
         await sendWorkflowEcecution({
             workflowId,
             initialData: {
-                googleForm: formData
+                stripe: stripeData
             }
         })
         return NextResponse.json({ success: true }, { status: 200 });
 
     } catch (error) {
-        console.error("Error handling Google Form trigger:", error);
+        console.error("Error handling Stripe trigger:", error);
         return NextResponse.json(
-            { success: false, message: "An error occurred while handling the Google Form trigger." },
+            { success: false, message: "An error occurred while handling the Stripe trigger." },
             { status: 500 }
         );
     }

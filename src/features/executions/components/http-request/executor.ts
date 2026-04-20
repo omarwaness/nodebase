@@ -11,9 +11,9 @@ Handlebars.registerHelper("json", (context) => {
 });
 
 type HttpRequestData = {
-    variableName: string;
-    endpoint: string;
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
+    variableName?: string;
+    endpoint?: string;
+    method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
     body?: string;
 }
 
@@ -31,38 +31,38 @@ export const HttpRequestExecutor: NodeExecutor<HttpRequestData> = async ({
         })
     )
 
-    if (!data.endpoint) {
-        await publish(
-            httpRequestChannel().status({
-                nodeId,
-                status: "error"
-            })
-        )
-        throw new NonRetriableError("HTTP request node is missing endpoint configuration");
-    }
-
-    if (!data.variableName) {
-        await publish(
-            httpRequestChannel().status({
-                nodeId,
-                status: "error"
-            })
-        )
-        throw new NonRetriableError("HTTP request node is missing variable name configuration");
-    }
-
-    if (!data.method) {
-        await publish(
-            httpRequestChannel().status({
-                nodeId,
-                status: "error"
-            })
-        )
-        throw new NonRetriableError("HTTP request node is missing method configuration");
-    }
-
     try {
         const result = await step.run("http-request", async () => {
+            if (!data.endpoint) {
+                await publish(
+                    httpRequestChannel().status({
+                        nodeId,
+                        status: "error"
+                    })
+                )
+                throw new NonRetriableError("HTTP request node is missing endpoint configuration");
+            }
+
+            if (!data.variableName) {
+                await publish(
+                    httpRequestChannel().status({
+                        nodeId,
+                        status: "error"
+                    })
+                )
+                throw new NonRetriableError("HTTP request node is missing variable name configuration");
+            }
+
+            if (!data.method) {
+                await publish(
+                    httpRequestChannel().status({
+                        nodeId,
+                        status: "error"
+                    })
+                )
+                throw new NonRetriableError("HTTP request node is missing method configuration");
+            }
+            
             const endpoint = Handlebars.compile(data.endpoint)(context);
             const method = data.method;
 
