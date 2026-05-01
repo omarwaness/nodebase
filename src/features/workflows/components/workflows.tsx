@@ -19,7 +19,7 @@ import {
 } from '../hooks/use-workflows'
 import { useUpgradeModal } from '@/hooks/use-upgrade-modal'
 import { useRouter } from 'next/navigation'
-import { useWorkflowsParams } from '../hooks/use-workflows.params'
+import { useWorkflowsParams } from '../hooks/use-workflows-params'
 import { useEntitySearch } from '@/hooks/use-entity-search'
 import { Workflow } from '@/generated/prisma'
 import { WorkflowIcon } from 'lucide-react'
