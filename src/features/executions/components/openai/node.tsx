@@ -1,58 +1,58 @@
-'use client'
+"use client";
 
-import { type NodeProps, Node, useReactFlow } from '@xyflow/react'
-import { memo, useState } from 'react'
-import { BaseExecutionNode } from '../base-execution-node'
-import { OpenaiFormValues, OpenaiDialog } from './dialog'
-import { useNodeStatus } from '../../hooks/use-node-status'
-import { fetchOpenAIRealtimeToken } from './action'
-import { OPENAI_CHANNEL_NAME } from '@/inngest/channels/openai'
+import { useReactFlow, type Node, type NodeProps } from "@xyflow/react";
+import { memo, useState } from "react";
+import { BaseExecutionNode } from "../base-execution-node";
+import { OpenAiDialog, OpenAiFormValues } from "./dialog";
+import { useNodeStatus } from "../../hooks/use-node-status";
+import { fetchOpenAiRealtimeToken } from "./actions";
+import { OPENAI_CHANNEL_NAME } from "@/inngest/channels/openai";
 
-type OpenaiNodeData = {
-  variableName?: string
-  systemPrompt?: string
-  userPrompt?: string
-}
+type OpenAiNodeData = {
+  variableName?: string;
+  credentialId?: string;
+  systemPrompt?: string;
+  userPrompt?: string;
+};
 
-type OpenaiNodeType = Node<OpenaiNodeData>
+type OpenAiNodeType = Node<OpenAiNodeData>;
 
-export const OpenaiNode = memo((props: NodeProps<OpenaiNodeType>) => {
-  const [dialogOpen, setDialogOpen] = useState(false)
-  const { setNodes } = useReactFlow()
+export const OpenAiNode = memo((props: NodeProps<OpenAiNodeType>) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const { setNodes } = useReactFlow();
 
   const nodeStatus = useNodeStatus({
     nodeId: props.id,
     channel: OPENAI_CHANNEL_NAME,
-    topic: 'status',
-    refreshToken: fetchOpenAIRealtimeToken
-  })
-  const handleOpenSettings = () => setDialogOpen(true)
+    topic: "status",
+    refreshToken: fetchOpenAiRealtimeToken,
+  });
 
-  const handleSubmit = (values: OpenaiFormValues) => {
-    setNodes(nodes =>
-      nodes.map(node => {
-        if (node.id === props.id) {
-          return {
-            ...node,
-            data: {
-              ...node.data,
-              ...values
-            }
+  const handleOpenSettings = () => setDialogOpen(true);
+
+  const handleSubmit = (values: OpenAiFormValues) => {
+    setNodes((nodes) => nodes.map((node) => {
+      if (node.id === props.id) {
+        return {
+          ...node,
+          data: {
+            ...node.data,
+            ...values,
           }
         }
-        return node
-      })
-    )
-  }
+      }
+      return node;
+    }))
+  };
 
-  const nodeData = props.data
+  const nodeData = props.data;
   const description = nodeData?.userPrompt
-    ? `'gpt-4o' ${nodeData.userPrompt.slice(0, 30)}...`
-    : 'Not configured'
+    ? `gpt-4: ${nodeData.userPrompt.slice(0, 50)}...`
+    : "Not configured";
 
   return (
     <>
-      <OpenaiDialog
+      <OpenAiDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSubmit={handleSubmit}
@@ -62,7 +62,7 @@ export const OpenaiNode = memo((props: NodeProps<OpenaiNodeType>) => {
         {...props}
         id={props.id}
         icon="/logos/openai.svg"
-        name="OpenAI"
+        name="OpenAi"
         status={nodeStatus}
         description={description}
         onSettings={handleOpenSettings}
@@ -70,6 +70,6 @@ export const OpenaiNode = memo((props: NodeProps<OpenaiNodeType>) => {
       />
     </>
   )
-})
+});
 
-OpenaiNode.displayName = 'OpenaiNode'
+OpenAiNode.displayName = "OpenAiNode";

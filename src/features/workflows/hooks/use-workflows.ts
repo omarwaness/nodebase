@@ -2,7 +2,7 @@ import { useTRPC } from "@/trpc/client"
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { useWorkflowsParams } from "./use-workflows.params"
+import { useWorkflowsParams } from "./use-workflows-params"
 
 /**
  * Hook to fetch all workflows using suspense.
