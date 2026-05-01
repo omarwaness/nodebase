@@ -1,6 +1,6 @@
 import {
   AlertTriangleIcon,
-  LoaderIcon,
+  Loader2Icon,
   MoreVerticalIcon,
   PackageOpenIcon,
   PlusIcon,
@@ -19,7 +19,6 @@ import {
   EmptyTitle
 } from './ui/empty'
 import { cn } from '@/lib/utils'
-import React from 'react'
 import { Card, CardContent, CardDescription, CardTitle } from './ui/card'
 import {
   DropdownMenu,
@@ -31,7 +30,7 @@ import {
 type EntityHeaderProps = {
   title: string
   description?: string
-  newButtonLabel: string
+  newButtonLabel?: string
   disabled?: boolean
   isCreating?: boolean
 } & (
@@ -172,18 +171,11 @@ interface StateViewProps {
   message?: string
 }
 
-interface LoadingViewProps extends StateViewProps {
-  entity?: string
-}
-
-export const LoadingView = ({
-  message,
-  entity = 'items'
-}: LoadingViewProps) => {
+export const LoadingView = ({ message }: StateViewProps) => {
   return (
     <div className="flex justify-center items-center h-full flex-1 flex-col gap-y-4">
-      <LoaderIcon className="size-6 animate-spin text-primary" />
-      {!!message && <p className="text-sm text-primary">{message}</p>}
+      <Loader2Icon className="size-6 animate-spin text-primary" />
+      {!!message && <p className="text-sm text-muted-foreground">{message}</p>}
     </div>
   )
 }
@@ -191,7 +183,7 @@ export const LoadingView = ({
 export const ErrorView = ({ message }: StateViewProps) => {
   return (
     <div className="flex justify-center items-center h-full flex-1 flex-col gap-y-4">
-      <AlertTriangleIcon className="size-6 text-destructive" />
+      <AlertTriangleIcon className="size-6 text-primary" />
       {!!message && <p className="text-sm text-muted-foreground">{message}</p>}
     </div>
   )
@@ -316,8 +308,8 @@ export const EntityItem = ({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      variant="ghost"
                       size="icon"
+                      variant="ghost"
                       onClick={e => e.stopPropagation()}
                     >
                       <MoreVerticalIcon className="size-4" />
@@ -328,7 +320,8 @@ export const EntityItem = ({
                     onClick={e => e.stopPropagation()}
                   >
                     <DropdownMenuItem onClick={handleRemove}>
-                      <TrashIcon className="size-4" /> Delete
+                      <TrashIcon className="size-4" />
+                      Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

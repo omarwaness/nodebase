@@ -1,24 +1,24 @@
 import { Connection, Node } from "@/generated/prisma";
 import toposort from "toposort";
-import { boolean } from "zod";
 import { inngest } from "./client";
+import { createId } from "@paralleldrive/cuid2";
 
 export const topologicalSort = (
     nodes: Node[],
-    connections: Connection[]
+    connections: Connection[],
 ): Node[] => {
-    // if no connections, return nodes as is
+    // If no connections, return node as-is (they're all independent)
     if (connections.length === 0) {
         return nodes;
     }
 
-    // create edges for toposort
+    // Create edges array for toposort
     const edges: [string, string][] = connections.map((conn) => [
         conn.fromNodeId,
         conn.toNodeId,
     ]);
 
-    // add nodes without connections to edges to ensure they are included
+    // Add nodes with no connections as self-edges to ensure they're included
     const connectedNodeIds = new Set<string>();
     for (const conn of connections) {
         connectedNodeIds.add(conn.fromNodeId);
@@ -31,11 +31,11 @@ export const topologicalSort = (
         }
     }
 
-    // perform topological sort
+    // Perform topological sort
     let sortedNodeIds: string[];
     try {
         sortedNodeIds = toposort(edges);
-        // remove duplicates  from self edges
+        // Remove duplicates (from self-edges)
         sortedNodeIds = [...new Set(sortedNodeIds)];
     } catch (error) {
         if (error instanceof Error && error.message.includes("Cyclic")) {
@@ -44,18 +44,18 @@ export const topologicalSort = (
         throw error;
     }
 
-    // map sorted node IDs back to nodes objects
-    const nodeMap = new Map(nodes.map((node) => [node.id, node]));
-    return sortedNodeIds.map((id) => nodeMap.get(id)!).filter(boolean);
-}
+    // Map sorted IDs back to node objects
+    const nodeMap = new Map(nodes.map((n) => [n.id, n]));
+    return sortedNodeIds.map((id) => nodeMap.get(id)!).filter(Boolean);
+};
 
-export const sendWorkflowEcecution = async (data: {
-    workflowId: string,
-    [key: string]: any
+export const sendWorkflowExecution = async (data: {
+    workflowId: string;
+    [key: string]: any;
 }) => {
     return inngest.send({
         name: "workflows/execute.workflow",
-        data
-    })
-
-}
+        data,
+        id: createId(),
+    });
+};
