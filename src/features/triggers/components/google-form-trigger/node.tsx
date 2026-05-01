@@ -1,6 +1,6 @@
 import { NodeProps } from '@xyflow/react'
 import { memo, useState } from 'react'
-import { BaseTriggerNode } from '../components/base-trigger-node'
+import { BaseTriggerNode } from '../base-trigger-node'
 import { GoogleFormTriggerDialog } from './dialog'
 import { useNodeStatus } from '@/features/executions/hooks/use-node-status'
 import { fetchGoogleFormTriggerRealtimeToken } from './action'
